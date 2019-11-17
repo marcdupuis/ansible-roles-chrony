@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+# liste des serveurs NTP à utiliser
+{% for server in ntp_server_list %}
+server {{ server }} iburst
+{% endfor %}
+

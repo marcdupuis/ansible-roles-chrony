@@ -1,0 +1,7 @@
+---
+
+- name: redémarrage de chrony
+  service:
+    name: chronyd
+    state: restarted
+

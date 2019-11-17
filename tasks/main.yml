@@ -1,0 +1,39 @@
+---
+
+- name: vérification de la présence du package ntpd
+  stat:
+    path: "/usr/lib/systemd/system/ntpd.service"
+  register: ntpd_service
+
+- name: supprime le package ntp si nécessaire
+  yum:
+    name: ntp
+    state: absent
+  when: ntpd_service.stat.exists
+
+- name: installation de chrony
+  yum:
+    name: chrony
+    state: present
+
+- name: copie le fichier de configuration chrony.conf
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify:
+    - redémarrage de chrony
+
+- name: Configuration de timezone
+  timezone:
+    name="{{timezone}}"
+
+
+- name: démarrage et activation du service chrony
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+
